@@ -24,7 +24,7 @@ public class SmsList extends ListActivity {
     String address;
     String TAG = SmsList.class.getSimpleName();
     public static ListAdapter listAdapter ;
-    Map<String, List<SmsData> > convList;
+    public static Map<String, List<SmsData> > convList;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -104,7 +104,11 @@ public class SmsList extends ListActivity {
     protected void onListItemClick(ListView l, View v, int position, long id) {
         String number = ((SmsData)getListAdapter().getItem(position)).getNumber();
         Intent i =  new Intent(SmsList.this,MessengerActivity.class);
+        Log.d(TAG,number);
+        List<SmsData> smsdata = convList.get(number);
+        Log.d(TAG,String.valueOf(convList.get(number).size()));
         ArrayList<SmsData> smsList =(ArrayList<SmsData>)convList.get(number);
+        Log.d(TAG, "onListItemClick: "+smsList.size());
         i.putParcelableArrayListExtra("smsList",smsList);
         startActivity(i);
     }

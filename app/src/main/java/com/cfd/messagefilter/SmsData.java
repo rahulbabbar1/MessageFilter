@@ -2,7 +2,10 @@ package com.cfd.messagefilter;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -10,10 +13,34 @@ import java.util.Date;
  */
 public class SmsData implements Parcelable {
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
+
     // Number from witch the sms was send
     private String number;
     // SMS text body
     private String body;
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
 
     private String id;
 
@@ -22,11 +49,24 @@ public class SmsData implements Parcelable {
     private String name;
 
     private int type;
-
-    protected int mData;
+//
+//    protected int mData;
 
     private SmsData(Parcel in) {
-        mData = in.readInt();
+        //mData = in.readInt();
+        String[] array = new String[5];
+        in.readStringArray(array);
+        this.number = array[0];
+        this.name = array[1];
+        this.body = array[2];
+        this.type = Integer.parseInt(array[3]);
+        Log.d("test", "SmsData: "+array[4]);
+        SimpleDateFormat sdf = new SimpleDateFormat("EE MM d k':'m':'s zzz y");
+        try {
+            this.date = sdf.parse(array[4]);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
     }
 
     public int describeContents() {

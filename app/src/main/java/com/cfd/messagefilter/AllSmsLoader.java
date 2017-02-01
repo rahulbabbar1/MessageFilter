@@ -48,7 +48,7 @@ public class AllSmsLoader implements LoaderManager.LoaderCallbacks<Cursor> {
                 String phoneNumber = cursor.getString(cursor.getColumnIndexOrThrow("address"));
                 Log.d(TAG, "phoneNumber: "+ phoneNumber +" ");
                 int type = cursor.getInt(cursor.getColumnIndexOrThrow("type"));
-                if ((!phoneNumbers.contains(phoneNumber)) && (type != 3) && (phoneNumber.length()>=1)) {
+                if ( (type != 3) && (phoneNumber.length()>=1)) {
                     String name = null;
                     String person = cursor.getString(cursor.getColumnIndexOrThrow("person"));
                     String smsContent = cursor.getString(cursor.getColumnIndexOrThrow("body"));
@@ -62,22 +62,29 @@ public class AllSmsLoader implements LoaderManager.LoaderCallbacks<Cursor> {
                         localCursor.moveToFirst();
                         name = localCursor.getString(localCursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
                     }
-                    Log.d(TAG, "person:" + person + "  name:" + name + "  phoneNumber:" + phoneNumber);
+                    Log.d(TAG, "person:" + person + "  name:" + name + "  phoneNumber:" + phoneNumber + " type:" + type);
                     localCursor.close();
                     phoneNumbers.add(phoneNumber);
                     SmsData sms = new SmsData(name, phoneNumber, smsContent, type, date);
 
-                    List<SmsData> sms_All;
-                    if(convList.containsKey(phoneNumber)){
+                    List<SmsData> sms_All=convList.get(phoneNumber);
+
+                    if(sms_All!=null){
                         sms_All = convList.get(phoneNumber);
+                        Log.d(TAG, "1onLoadFinished() called with: size = [" + sms_All.size() );
                     }
                     else {
                         sms_All = new ArrayList<SmsData>();
                     }
+                    Log.d(TAG, "1.5onLoadFinished() called with: size = [" + sms_All.size() );
                     sms_All.add(sms);
+                    Log.d(TAG, "2onLoadFinished() called with: size = [" + sms_All.size() );
+                    Log.d(TAG, "3onLoadFinished() called with: size = [" + sms_All.size() );
                     convList.put(phoneNumber,sms_All);
+                    Log.d(TAG,String.valueOf(convList.get(phoneNumber).size()));
                 }
             }
+            SmsList.convList = convList;
             SmsList.listAdapter.updateList(Utility.parseList(convList));
             SmsList.listAdapter.notifyDataSetChanged();
             Log.d(TAG, "onLoadFinished() called with: cursorLoader = [" + cursorLoader + "], cursor = [" + cursor + "]");
