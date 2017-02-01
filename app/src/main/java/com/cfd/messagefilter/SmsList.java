@@ -1,6 +1,7 @@
 package com.cfd.messagefilter;
 
 import android.app.ListActivity;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,11 +24,12 @@ public class SmsList extends ListActivity {
     String address;
     String TAG = SmsList.class.getSimpleName();
     public static ListAdapter listAdapter ;
+    Map<String, List<SmsData> > convList;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         List<SmsData> smsList = new ArrayList<SmsData>();
-        Map<String, List<SmsData> > convList = new HashMap<String, List<SmsData>>();
+         convList = new HashMap<String, List<SmsData>>();
         listAdapter = new ListAdapter(this, smsList);
         setListAdapter(listAdapter);
         AllSmsLoader allSmsLoader = new AllSmsLoader(SmsList.this);
@@ -99,9 +102,11 @@ public class SmsList extends ListActivity {
 
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
-        SmsData sms = (SmsData)getListAdapter().getItem(position);
-
-        Toast.makeText(getApplicationContext(), sms.getBody(), Toast.LENGTH_LONG).show();
+        String number = ((SmsData)getListAdapter().getItem(position)).getNumber();
+        Intent i =  new Intent(SmsList.this,MessengerActivity.class);
+        ArrayList<SmsData> smsList =(ArrayList<SmsData>)convList.get(number);
+        i.putParcelableArrayListExtra("smsList",smsList);
+        startActivity(i);
     }
 
     public static void showList(){

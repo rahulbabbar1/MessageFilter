@@ -78,7 +78,6 @@ public class AllSmsLoader implements LoaderManager.LoaderCallbacks<Cursor> {
                     convList.put(phoneNumber,sms_All);
                 }
             }
-
             SmsList.listAdapter.updateList(Utility.parseList(convList));
             SmsList.listAdapter.notifyDataSetChanged();
             Log.d(TAG, "onLoadFinished() called with: cursorLoader = [" + cursorLoader + "], cursor = [" + cursor + "]");

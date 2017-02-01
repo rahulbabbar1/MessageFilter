@@ -1,11 +1,14 @@
 package com.cfd.messagefilter;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.Date;
 
 /**
  * Created by rahul on 1/2/17.
  */
-public class SmsData {
+public class SmsData implements Parcelable {
 
     // Number from witch the sms was send
     private String number;
@@ -20,7 +23,26 @@ public class SmsData {
 
     private int type;
 
+    protected int mData;
 
+    private SmsData(Parcel in) {
+        mData = in.readInt();
+    }
+
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Parcelable.Creator<SmsData> CREATOR
+            = new Parcelable.Creator<SmsData>() {
+        public SmsData createFromParcel(Parcel in) {
+            return new SmsData(in);
+        }
+
+        public SmsData[] newArray(int size) {
+            return new SmsData[size];
+        }
+    };
 
     public SmsData(String name, String phoneNumber, String smsContent, int type, Date date) {
         this.number = phoneNumber;
@@ -55,4 +77,10 @@ public class SmsData {
         this.body = body;
     }
 
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        String[] array = {number,name,body,String.valueOf(type),date.toString()};
+        dest.writeStringArray(array);
+    }
 }
+
