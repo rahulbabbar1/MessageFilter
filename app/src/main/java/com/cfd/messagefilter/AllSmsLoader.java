@@ -13,7 +13,9 @@ import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static android.Manifest.permission_group.SMS;
 
@@ -40,8 +42,8 @@ public class AllSmsLoader implements LoaderManager.LoaderCallbacks<Cursor> {
         @Override
         public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
             Log.d(TAG, "load finished: ");
-            List<SmsData> sms_All = new ArrayList<SmsData>();
             List<String> phoneNumbers = new ArrayList<String>();
+            Map<String, List<SmsData> > convList = new HashMap<String, List<SmsData>>();
             while (cursor.moveToNext()) {
                 String phoneNumber = cursor.getString(cursor.getColumnIndexOrThrow("address"));
                 Log.d(TAG, "phoneNumber: "+ phoneNumber +" ");
@@ -64,11 +66,20 @@ public class AllSmsLoader implements LoaderManager.LoaderCallbacks<Cursor> {
                     localCursor.close();
                     phoneNumbers.add(phoneNumber);
                     SmsData sms = new SmsData(name, phoneNumber, smsContent, type, date);
+
+                    List<SmsData> sms_All;
+                    if(convList.containsKey(phoneNumber)){
+                        sms_All = convList.get(phoneNumber);
+                    }
+                    else {
+                        sms_All = new ArrayList<SmsData>();
+                    }
                     sms_All.add(sms);
+                    convList.put(phoneNumber,sms_All);
                 }
             }
-            SmsList.smsList = sms_All;
-            SmsList.listAdapter.updateList(sms_All);
+
+            SmsList.listAdapter.updateList(Utility.parseList(convList));
             SmsList.listAdapter.notifyDataSetChanged();
             Log.d(TAG, "onLoadFinished() called with: cursorLoader = [" + cursorLoader + "], cursor = [" + cursor + "]");
             //simpleCursorAdapter.swapCursor(cursor);

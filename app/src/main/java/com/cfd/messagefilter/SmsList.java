@@ -21,11 +21,12 @@ import java.util.Map;
 public class SmsList extends ListActivity {
     String address;
     String TAG = SmsList.class.getSimpleName();
-    public static List<SmsData> smsList = new ArrayList<SmsData>();
     public static ListAdapter listAdapter ;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        List<SmsData> smsList = new ArrayList<SmsData>();
+        Map<String, List<SmsData> > convList = new HashMap<String, List<SmsData>>();
         listAdapter = new ListAdapter(this, smsList);
         setListAdapter(listAdapter);
         AllSmsLoader allSmsLoader = new AllSmsLoader(SmsList.this);
