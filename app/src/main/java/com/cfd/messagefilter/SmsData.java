@@ -1,5 +1,7 @@
 package com.cfd.messagefilter;
 
+import java.util.Date;
+
 /**
  * Created by rahul on 1/2/17.
  */
@@ -9,6 +11,33 @@ public class SmsData {
     private String number;
     // SMS text body
     private String body;
+
+    private String id;
+
+    private Date date;
+
+    private String name;
+
+    private int type;
+
+
+
+    public SmsData(String name, String phoneNumber, String smsContent, int type, Date date) {
+        this.number = phoneNumber;
+        this.name = name;
+        this.body = smsContent;
+        this.date = date;
+        this.type = type;
+    }
+
+
+    public String  getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getNumber() {
         return number;

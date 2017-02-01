@@ -17,7 +17,7 @@ public class ListAdapter extends ArrayAdapter<SmsData> {
     // List context
     private final Context context;
     // List values
-    private final List<SmsData> smsList;
+    private static List<SmsData> smsList;
 
     public ListAdapter(Context context, List<SmsData> smsList) {
         super(context, R.layout.activity_main, smsList);
@@ -37,5 +37,9 @@ public class ListAdapter extends ArrayAdapter<SmsData> {
         return rowView;
     }
 
+    public static void updateList(List<SmsData> newlist) {
+        smsList.clear();
+        smsList.addAll(newlist);
+    }
 }
 
