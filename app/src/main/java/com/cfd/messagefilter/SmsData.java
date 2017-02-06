@@ -4,6 +4,9 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -34,17 +37,17 @@ public class SmsData implements Parcelable {
     // SMS text body
     private String body;
 
-    public Date getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(String date) {
         this.date = date;
     }
 
     private String id;
 
-    private Date date;
+    private String date;
 
     private String name;
 
@@ -61,12 +64,7 @@ public class SmsData implements Parcelable {
         this.body = array[2];
         this.type = Integer.parseInt(array[3]);
         Log.d("test", "SmsData: "+array[4]);
-        SimpleDateFormat sdf = new SimpleDateFormat("EE MM d k':'m':'s zzz y");
-        try {
-            this.date = sdf.parse(array[4]);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+        this.date = array[4];
     }
 
     public int describeContents() {
@@ -84,7 +82,7 @@ public class SmsData implements Parcelable {
         }
     };
 
-    public SmsData(String name, String phoneNumber, String smsContent, int type, Date date) {
+    public SmsData(String name, String phoneNumber, String smsContent, int type, String date) {
         this.number = phoneNumber;
         this.name = name;
         this.body = smsContent;
@@ -94,8 +92,7 @@ public class SmsData implements Parcelable {
 
 
     public String  getId() {
-        return id;
-    }
+        return id;    }
 
     public void setId(String id) {
         this.id = id;
@@ -119,8 +116,46 @@ public class SmsData implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        String[] array = {number,name,body,String.valueOf(type),date.toString()};
+        String[] array = {number,name,body,String.valueOf(type),date};
         dest.writeStringArray(array);
     }
+
+    @Override
+    public String toString() {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("number", number);
+            jsonObject.put("name", name);
+            jsonObject.put("body", body);
+            jsonObject.put("type", String.valueOf(type));
+            jsonObject.put("date", date);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return jsonObject.toString();
+    }
+
+    public SmsData(String data) {
+        JSONObject jsonObject = null;
+        try {
+            jsonObject = new JSONObject(data);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        if(jsonObject!=null){
+            try {
+                this.number = jsonObject.getString("number");
+                this.body = jsonObject.getString("body");
+                this.name = jsonObject.getString("name");
+                this.type = Integer.parseInt(jsonObject.getString("type"));
+                this.date = jsonObject.getString("type");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
 }
 

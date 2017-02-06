@@ -23,4 +23,16 @@ public class Utility {
         }
         return finalList;
     }
+
+    public static ArrayList<SmsData> parseArrayList(Map<String, List<SmsData> > convList ){
+
+        Object[] list = convList.values().toArray();
+        ArrayList<SmsData> finalList = new ArrayList<SmsData>();
+        for(int i=0;i<list.length;i++){
+            ArrayList<SmsData> sd = (ArrayList<SmsData>) list[i];
+            if(sd.size()>0)
+                finalList.add(sd.get(0));
+        }
+        return finalList;
+    }
 }

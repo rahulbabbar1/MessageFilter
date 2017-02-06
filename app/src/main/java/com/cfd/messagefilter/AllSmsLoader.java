@@ -52,7 +52,7 @@ public class AllSmsLoader implements LoaderManager.LoaderCallbacks<Cursor> {
                     String name = null;
                     String person = cursor.getString(cursor.getColumnIndexOrThrow("person"));
                     String smsContent = cursor.getString(cursor.getColumnIndexOrThrow("body"));
-                    Date date = new Date(Long.parseLong(cursor.getString(cursor.getColumnIndexOrThrow("date"))));
+                    String date = cursor.getString(cursor.getColumnIndexOrThrow("date"));
                     Uri personUri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, phoneNumber);
                     ContentResolver cr = context.getContentResolver();
                     Cursor localCursor = cr.query(personUri,
@@ -69,24 +69,19 @@ public class AllSmsLoader implements LoaderManager.LoaderCallbacks<Cursor> {
 
                     List<SmsData> sms_All=convList.get(phoneNumber);
 
-                    if(sms_All!=null){
-                        sms_All = convList.get(phoneNumber);
-                        Log.d(TAG, "1onLoadFinished() called with: size = [" + sms_All.size() );
-                    }
-                    else {
+                     if(sms_All==null){
                         sms_All = new ArrayList<SmsData>();
-                    }
-                    Log.d(TAG, "1.5onLoadFinished() called with: size = [" + sms_All.size() );
+                     }
+
                     sms_All.add(sms);
-                    Log.d(TAG, "2onLoadFinished() called with: size = [" + sms_All.size() );
-                    Log.d(TAG, "3onLoadFinished() called with: size = [" + sms_All.size() );
                     convList.put(phoneNumber,sms_All);
-                    Log.d(TAG,String.valueOf(convList.get(phoneNumber).size()));
+
                 }
             }
-            SmsList.convList = convList;
-            SmsList.listAdapter.updateList(Utility.parseList(convList));
-            SmsList.listAdapter.notifyDataSetChanged();
+//            SmsList.convList = convList;
+//            SmsList.listAdapter.updateList(Utility.parseList(convList));
+//            SmsList.listAdapter.notifyDataSetChanged();
+            fetchActivity.notifyDataLoaded();
             Log.d(TAG, "onLoadFinished() called with: cursorLoader = [" + cursorLoader + "], cursor = [" + cursor + "]");
             //simpleCursorAdapter.swapCursor(cursor);
         }
