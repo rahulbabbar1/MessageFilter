@@ -36,12 +36,6 @@ public class SmsList extends ListActivity {
         Bundle b = new Bundle();
         getLoaderManager().initLoader(0,b,allSmsLoader);
 
-        new Thread(new Runnable() {
-            public void run() {
-
-                // a potentially  time consuming task
-            }
-        }).start();
 
         //List<SmsData> smsList = new ArrayList<SmsData>();
         //Map<String, SmsData> smsList = new HashMap<String, SmsData>();

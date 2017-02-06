@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.View;
 
 import java.util.ArrayList;
@@ -25,6 +26,7 @@ public class MessengerActivity extends Activity {
      User me;
      User you;
     private ChatView mChatView;
+    String TAG = this.getClass().getSimpleName();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -109,15 +111,20 @@ public class MessengerActivity extends Activity {
         for(int i=0;i<size;i++){
             SmsData sd = smsList.get(i);
             User user;
+            boolean side;
             if(sd.getType()==1){
-                user = you;
+                user = new User(sd.getType(), sd.getName(), BitmapFactory.decodeResource(getResources(), R.drawable.ic_user));;
+                side = false;
+                Log.d(TAG, "usertype is 1");
             }
             else {
-                user = me;
+                user = new User(sd.getType(), "You", BitmapFactory.decodeResource(getResources(), R.drawable.ic_user));;
+                side = true;
+                Log.d(TAG, "usertype is 2");
             }
             Message message = new Message.Builder()
                     .setUser(user)
-                    .setRightMessage(true)
+                    .setRightMessage(side)
                     .setMessageText(sd.getBody())
                     .hideIcon(true)
                     .build();
