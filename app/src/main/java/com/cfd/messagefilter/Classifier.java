@@ -10,7 +10,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
 import com.cfd.messagefilter.models.SMS;
 import com.cfd.messagefilter.models.SMSCategory;
-import com.cfd.messagefilter.volley.SMSCLassifyRequest;
+import com.cfd.messagefilter.volley.SMSClassifyRequest;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -62,7 +62,7 @@ public class Classifier {
                     for (int i = 0; i < jsonResponse.length(); i++) {
                         JSONObject jsonObject = jsonResponse.getJSONObject(i);
                         final int predictedCat = jsonObject.getInt("predicted_cat");
-                        final int _id = jsonObject.getInt("_id");
+                        final int _id = jsonObject.getInt("id");
                         realm.executeTransaction(new Realm.Transaction() {
                             @Override
                             public void execute(Realm realm) {
@@ -87,9 +87,9 @@ public class Classifier {
                 error.printStackTrace();
             }
         };
-        SMSCLassifyRequest adEditRequest = new SMSCLassifyRequest(smses, responseListener, errorListener);
-        adEditRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 5, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        SMSClassifyRequest smsClassifyRequest = new SMSClassifyRequest(smses, responseListener, errorListener);
+        smsClassifyRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 5, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         RequestQueue queue = Volley.newRequestQueue(context);
-        queue.add(adEditRequest);
+        queue.add(smsClassifyRequest);
     }
 }

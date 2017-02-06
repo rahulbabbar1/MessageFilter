@@ -1,59 +1,56 @@
 package com.cfd.messagefilter;
 
-import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.cfd.messagefilter.models.SMS;
+import com.cfd.messagefilter.models.SMSCategory;
+
+import io.realm.Realm;
+import io.realm.RealmList;
 
 /**
  * Created by rahul on 6/2/17.
  */
-public class fetchActivity extends AppCompatActivity{
+public class fetchActivity extends AppCompatActivity {
+    private Realm realm;
     private static final String TAG = fetchActivity.class.getSimpleName();
-    private static Context mContext;
-//    public static Map<String, List<SmsData>>[] convList;
+
+
+    //    public static Map<String, List<SmsData>>[] convList;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        convList = new Map[5];
-//        for(int i=0;i<5;i++){
-//            convList[i] = new HashMap<String, List<SmsData>>();
-//            List<SmsData> test = new ArrayList<SmsData>();
-//            Date dt = new Date();
-//
-//            Log.d(TAG, "date = [" + dt.toString() + "]");
-//            SmsData smsData = new SmsData("rahul","12345678","hui",1,dt.toString());
-//            test.add(smsData);
-//            SmsData smsData2 = new SmsData("rahul","12345678","huahhai",2,dt.toString());
-//            test.add(smsData2);
-//            convList[i].put("rahul",test);
-//            List<SmsData> test2 = new ArrayList<SmsData>();
-//            Date dt2 = new Date();
-//            Log.d(TAG, "date2 = [" + dt2.toString() + "]");
-//            SmsData smsData3 = new SmsData("chirag","7676881","hqjhjui",1,dt2.toString());
-//            test2.add(smsData3);
-//            SmsData smsData4 = new SmsData("chirag","7676881","huahkakkhai",1,dt2.toString());
-//            test2.add(smsData4);
-//            convList[i].put("chirag",test2);
-//        }
-        mContext = this;
-        Log.d(TAG, "onCreate() called with: savedInstanceState = [" + savedInstanceState + "]");
-        AllSmsLoader allSmsLoader = new AllSmsLoader(fetchActivity.this);
-        Bundle b = new Bundle();
-        getLoaderManager().initLoader(0,b,allSmsLoader);
+        SharedPreferences pref = getApplicationContext().getSharedPreferences("AppPref", 0); // 0 - for private mode
+        if (pref.getBoolean("FirstRun", true)) {
+            realm = Realm.getDefaultInstance();
+            addCategoriesToRealm();
+            AllSmsLoader allSmsLoader = new AllSmsLoader(fetchActivity.this);
+            Bundle b = new Bundle();
+            getLoaderManager().initLoader(0,b,allSmsLoader);
+        }
+        Classifier classifier = new Classifier(this);
+        classifier.classifyAllDefaultCategoryMesssages();
+        Intent i = new Intent(this, MainActivity.class);
+        this.startActivity(i);
     }
 
-    public static void notifyDataLoaded(){
-        Log.d(TAG, "notifyDataLoaded() called");
-        Intent i = new Intent(mContext,MainActivity.class);
-        mContext.startActivity(i);
+    private void addCategoriesToRealm() {
+        if (realm.where(SMSCategory.class).count() == 0) {
+            realm.executeTransaction(new Realm.Transaction() {
+                @Override
+                public void execute(Realm realm) {
+                    String[] categories = getResources().getStringArray(R.array.Categories);
+                    for (int i = -1; i < categories.length - 1; i++) {
+                        SMSCategory smsCategory = realm.createObject(SMSCategory.class);
+                        smsCategory.setId(i);
+                        smsCategory.setName(categories[i + 1]);
+                        smsCategory.setSmss(new RealmList<SMS>());
+                    }
+                }
+            });
+        }
     }
-
 }

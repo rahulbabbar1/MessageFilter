@@ -18,20 +18,11 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.cfd.messagefilter.models.SMS;
-import com.cfd.messagefilter.models.SMSCategory;
-
 import java.util.ArrayList;
-import java.util.List;
 
 import eu.long1.spacetablayout.SpaceTabLayout;
-import io.realm.Realm;
-import io.realm.RealmList;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
-
-
-    Realm realm;
     SpaceTabLayout tabLayout;
     String TAG = this.getClass().getSimpleName();
 
@@ -39,15 +30,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        realm = Realm.getDefaultInstance();
-        addCategoriesToRealm();
-        AllSmsLoader allSmsLoader = new AllSmsLoader(this);
-        getLoaderManager().initLoader(0, new Bundle(), allSmsLoader);
-
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -58,13 +43,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        List<Fragment> fragmentList = new ArrayList<>();
+        ArrayList<Fragment> fragmentList = new ArrayList<>();
 
-        for (int i = 0; i < 5; i++) {
-            Bundle bdlRecents = new Bundle(2);
-            bdlRecents.putInt("type", i);
+        for (int i = 1; i < 6; i++) {
             FragmentList frag = new FragmentList();
-            frag.setArguments(bdlRecents);
+            frag.setCategory(i);
             fragmentList.add(frag);
         }
 
@@ -73,23 +56,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         //we need the savedInstanceState to retrieve the position
         tabLayout.initialize(viewPager, getSupportFragmentManager(), fragmentList, savedInstanceState);
-    }
-
-    private void addCategoriesToRealm() {
-        if (realm.where(SMSCategory.class).count() == 0) {
-            realm.executeTransaction(new Realm.Transaction() {
-                @Override
-                public void execute(Realm realm) {
-                    String[] categories = getResources().getStringArray(R.array.Categories);
-                    for (int i = -1; i < categories.length - 1; i++) {
-                        SMSCategory smsCategory = realm.createObject(SMSCategory.class);
-                        smsCategory.setCategoryId(i);
-                        smsCategory.setCategoryName(categories[i]);
-                        smsCategory.setSmss(new RealmList<SMS>());
-                    }
-                }
-            });
-        }
     }
 
     @Override
@@ -115,7 +81,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 

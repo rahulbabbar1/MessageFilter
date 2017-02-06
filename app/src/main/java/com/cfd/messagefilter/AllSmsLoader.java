@@ -5,6 +5,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Loader;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -12,7 +13,6 @@ import android.provider.ContactsContract;
 
 import com.cfd.messagefilter.models.SMS;
 import com.cfd.messagefilter.models.SMSCategory;
-import com.cfd.messagefilter.volley.SMSCLassifyRequest;
 
 import java.util.Date;
 
@@ -33,7 +33,7 @@ class AllSmsLoader implements LoaderManager.LoaderCallbacks<Cursor> {
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         realm = Realm.getDefaultInstance();
-        smss = realm.where(SMSCategory.class).equalTo("name","Default").findFirst().getSmss();
+        smss = realm.where(SMSCategory.class).equalTo("id",-1).findFirst().getSmss();
         final String SMS_ALL = "content://sms/";
         Uri uri = Uri.parse(SMS_ALL);
         String[] projection = new String[]{"_id", "thread_id", "address", "person", "body", "date", "type"};
@@ -80,8 +80,11 @@ class AllSmsLoader implements LoaderManager.LoaderCallbacks<Cursor> {
                 });
             }
         }
-        Classifier classifier = new Classifier(context);
-        classifier.classifyAllDefaultCategoryMesssages();
+
+        SharedPreferences pref = context.getSharedPreferences("AppPref", 0); // 0 - for private mode
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putBoolean("FirstRun", false);
+        editor.apply();
     }
 
     @Override
