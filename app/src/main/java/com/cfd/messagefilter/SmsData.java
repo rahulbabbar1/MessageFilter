@@ -60,7 +60,7 @@ public class SmsData implements Parcelable {
         this.name = array[1];
         this.body = array[2];
         this.type = Integer.parseInt(array[3]);
-        Log.d("test", "SmsData: "+array[4]);
+        Log.d("test", "SMS: "+array[4]);
         SimpleDateFormat sdf = new SimpleDateFormat("EE MM d k':'m':'s zzz y");
         try {
             this.date = sdf.parse(array[4]);

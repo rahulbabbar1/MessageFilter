@@ -43,27 +43,27 @@ public class SmsList extends ListActivity {
             }
         }).start();
 
-        //List<SmsData> smsList = new ArrayList<SmsData>();
-        //Map<String, SmsData> smsList = new HashMap<String, SmsData>();
-//        Map<String, List<SmsData>> convList =  new HashMap<String, List<SmsData>>();
+        //List<SMS> smsList = new ArrayList<SMS>();
+        //Map<String, SMS> smsList = new HashMap<String, SMS>();
+//        Map<String, List<SMS>> convList =  new HashMap<String, List<SMS>>();
 //        Uri uri = Uri.parse("content://sms/inbox");
 //        Cursor c= getContentResolver().query(uri, null, null ,null,null);
 //        startManagingCursor(c);
 //        // Read the sms data and store it in the list
 //        if(c.moveToFirst()) {
 //            for(int i=0; i < c.getCount(); i++) {
-//                SmsData sms = new SmsData();
+//                SMS sms = new SMS();
 //                address = c.getString(c.getColumnIndexOrThrow("address")).toString();
 //                sms.setBody(c.getString(c.getColumnIndexOrThrow("body")).toString());
 //                sms.setNumber(address);
 //                Log.d(TAG, "onCreate() called with:"+ c.getString(c.getColumnIndexOrThrow("body")).toString() +" savedInstanceState = [" + c.getString(0) + "]");
 //                sms.setId(c.getString(0));
-//                List<SmsData> smsList;
+//                List<SMS> smsList;
 //                if(convList.containsKey(address)){
 //                    smsList = convList.get(address);
 //                }
 //                else {
-//                    smsList = new ArrayList<SmsData>();
+//                    smsList = new ArrayList<SMS>();
 //                }
 //                smsList.add(sms);
 //                c.moveToNext();
