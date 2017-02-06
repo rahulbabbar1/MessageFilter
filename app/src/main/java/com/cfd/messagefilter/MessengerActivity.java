@@ -1,7 +1,6 @@
 package com.cfd.messagefilter;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -10,7 +9,6 @@ import android.os.Handler;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
 
-import java.util.ArrayList;
 import java.util.Random;
 
 import jp.bassaer.chatmessageview.models.Message;
@@ -22,9 +20,10 @@ import jp.bassaer.chatmessageview.views.ChatView;
  * Created by rahul on 1/2/17.
  */
 public class MessengerActivity extends Activity {
-     User me;
-     User you;
+    User me;
+    User you;
     private ChatView mChatView;
+    String TAG = this.getClass().getSimpleName();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -45,7 +44,7 @@ public class MessengerActivity extends Activity {
         me = new User(myId, myName, myIcon);
         you = new User(yourId, yourName, yourIcon);
 
-        mChatView = (ChatView)findViewById(R.id.chat_view);
+        mChatView = (ChatView) findViewById(R.id.chat_view);
 
         //Set UI parameters if you need
         mChatView.setRightBubbleColor(ContextCompat.getColor(this, R.color.green500));
@@ -100,29 +99,34 @@ public class MessengerActivity extends Activity {
 
         });
 
-        Intent smsData = getIntent();
-        ArrayList<SmsData> smsList =  smsData.getParcelableArrayListExtra("smsList");
-        int size = 0;
-        if(smsList!=null){
-            size = smsList.size();
-        }
-        for(int i=0;i<size;i++){
-            SmsData sd = smsList.get(i);
-            User user;
-            if(sd.getType()==1){
-                user = you;
-            }
-            else {
-                user = me;
-            }
-            Message message = new Message.Builder()
-                    .setUser(user)
-                    .setRightMessage(true)
-                    .setMessageText(sd.getBody())
-                    .hideIcon(true)
-                    .build();
-            //Set to chat view
-            mChatView.send(message);
-        }
+//        Intent smsData = getIntent();
+//        ArrayList<SMS> smsList =  smsData.getParcelableArrayListExtra("smsList");
+//        int size = 0;
+//        if(smsList!=null){
+//            size = smsList.size();
+//        }
+//        for(int i=0;i<size;i++){
+//            SMS sd = smsList.get(i);
+//            User user;
+//            boolean side;
+//            if(sd.getType()==1){
+//                user = new User(sd.getType(), sd.getName(), BitmapFactory.decodeResource(getResources(), R.drawable.ic_user));;
+//                side = false;
+//                Log.d(TAG, "usertype is 1");
+//            }
+//            else {
+//                user = new User(sd.getType(), "You", BitmapFactory.decodeResource(getResources(), R.drawable.ic_user));;
+//                side = true;
+//                Log.d(TAG, "usertype is 2");
+//            }
+//            Message message = new Message.Builder()
+//                    .setUser(user)
+//                    .setRightMessage(side)
+//                    .setMessageText(sd.getBody())
+//                    .hideIcon(true)
+//                    .build();
+//            //Set to chat view
+//            mChatView.send(message);
+//        }
     }
 }
