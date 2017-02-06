@@ -8,8 +8,17 @@ import io.realm.RealmObject;
  */
 
 public class SMSCategory extends RealmObject {
+    private int categoryId;
     private String categoryName;
     private RealmList<SMS> smss;
+
+    public int getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(int categoryId) {
+        this.categoryId = categoryId;
+    }
 
     public String getCategoryName() {
         return categoryName;
@@ -26,4 +35,5 @@ public class SMSCategory extends RealmObject {
     public void setSmss(RealmList<SMS> smss) {
         this.smss = smss;
     }
+
 }

@@ -24,4 +24,5 @@ dependencies {
     compile 'com.android.support:appcompat-v7:25.1.0'
     compile 'jp.bassaer:chatmessageview:1.2.2'
     compile 'com.android.volley:volley:1.0.0'
+    compile 'eu.long1:spacetablayout:1.0.4'
 }

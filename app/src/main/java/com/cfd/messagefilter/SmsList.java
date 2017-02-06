@@ -2,16 +2,11 @@ package com.cfd.messagefilter;
 
 import android.app.ListActivity;
 import android.content.Intent;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.Telephony;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
-import android.widget.Toast;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,20 +16,21 @@ import java.util.Map;
  * Created by rahul on 1/2/17.
  */
 public class SmsList extends ListActivity {
-    String address;
+//    String address;
     String TAG = SmsList.class.getSimpleName();
-    public static ListAdapter listAdapter ;
-    public static Map<String, List<SmsData> > convList;
+    public ListAdapter listAdapter;
+    public static Map<String, List<SmsData>> convList;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        List<SmsData> smsList = new ArrayList<SmsData>();
-         convList = new HashMap<String, List<SmsData>>();
+        List<SmsData> smsList = new ArrayList<>();
+        convList = new HashMap<>();
         listAdapter = new ListAdapter(this, smsList);
         setListAdapter(listAdapter);
         AllSmsLoader allSmsLoader = new AllSmsLoader(SmsList.this);
         Bundle b = new Bundle();
-        getLoaderManager().initLoader(0,b,allSmsLoader);
+        getLoaderManager().initLoader(0, b, allSmsLoader);
 
         new Thread(new Runnable() {
             public void run() {
@@ -97,22 +93,21 @@ public class SmsList extends ListActivity {
 //        if(convList.get(address)!=null)
 
 
-
     }
 
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
-        String number = ((SmsData)getListAdapter().getItem(position)).getNumber();
-        Intent i =  new Intent(SmsList.this,MessengerActivity.class);
-        Log.d(TAG,number);
-        List<SmsData> smsdata = convList.get(number);
-        Log.d(TAG,String.valueOf(convList.get(number).size()));
-        ArrayList<SmsData> smsList =(ArrayList<SmsData>)convList.get(number);
-        Log.d(TAG, "onListItemClick: "+smsList.size());
-        i.putParcelableArrayListExtra("smsList",smsList);
+        String number = ((SmsData) getListAdapter().getItem(position)).getNumber();
+        Intent i = new Intent(SmsList.this, MessengerActivity.class);
+        Log.d(TAG, number);
+//        List<SmsData> smsdata = convList.get(number);
+        Log.d(TAG, String.valueOf(convList.get(number).size()));
+        ArrayList<SmsData> smsList = (ArrayList<SmsData>) convList.get(number);
+        Log.d(TAG, "onListItemClick: " + smsList.size());
+        i.putParcelableArrayListExtra("smsList", smsList);
         startActivity(i);
     }
 
-    public static void showList(){
-    }
+//    public static void showList() {
+//    }
 }

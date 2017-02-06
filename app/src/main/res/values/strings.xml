@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">MessageFilter</string>
+    <string-array name="Categories">
+        <item>Default</item>
+        <item>Spam</item>
+        <item>Personal</item>
+        <item>Important</item>
+        <item>OTP</item>
+        <item>Social</item>
+        <item>Recharge</item>
+    </string-array>
 </resources>
