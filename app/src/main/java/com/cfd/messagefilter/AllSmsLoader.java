@@ -41,16 +41,15 @@ public class AllSmsLoader implements LoaderManager.LoaderCallbacks<Cursor> {
 
         @Override
         public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-            Log.d(TAG, "load finished: ");
-            List<String> phoneNumbers = new ArrayList<String>();
-            Map<String, List<SmsData> > convList = new HashMap<String, List<SmsData>>();
+//            Log.d(TAG, "load finished: ");
+//            List<String> phoneNumbers = new ArrayList<String>();
             while (cursor.moveToNext()) {
                 String phoneNumber = cursor.getString(cursor.getColumnIndexOrThrow("address"));
-                Log.d(TAG, "phoneNumber: "+ phoneNumber +" ");
+
                 int type = cursor.getInt(cursor.getColumnIndexOrThrow("type"));
                 if ( (type != 3) && (phoneNumber.length()>=1)) {
                     String name = null;
-                    String person = cursor.getString(cursor.getColumnIndexOrThrow("person"));
+                    //String person = cursor.getString(cursor.getColumnIndexOrThrow("person"));
                     String smsContent = cursor.getString(cursor.getColumnIndexOrThrow("body"));
                     String date = cursor.getString(cursor.getColumnIndexOrThrow("date"));
                     Uri personUri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, phoneNumber);
@@ -62,28 +61,17 @@ public class AllSmsLoader implements LoaderManager.LoaderCallbacks<Cursor> {
                         localCursor.moveToFirst();
                         name = localCursor.getString(localCursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
                     }
-                    Log.d(TAG, "person:" + person + "  name:" + name + "  phoneNumber:" + phoneNumber + " type:" + type);
                     localCursor.close();
-                    phoneNumbers.add(phoneNumber);
-                    SmsData sms = new SmsData(name, phoneNumber, smsContent, type, date);
+                    //phoneNumbers.add(phoneNumber);
 
-                    List<SmsData> sms_All=convList.get(phoneNumber);
+                    //SmsData sms = new SmsData(name, phoneNumber, smsContent, type, date);
 
-                     if(sms_All==null){
-                        sms_All = new ArrayList<SmsData>();
-                     }
-
-                    sms_All.add(sms);
-                    convList.put(phoneNumber,sms_All);
-
+                    //Save to sms
                 }
             }
-//            SmsList.convList = convList;
-//            SmsList.listAdapter.updateList(Utility.parseList(convList));
-//            SmsList.listAdapter.notifyDataSetChanged();
+
             fetchActivity.notifyDataLoaded();
-            Log.d(TAG, "onLoadFinished() called with: cursorLoader = [" + cursorLoader + "], cursor = [" + cursor + "]");
-            //simpleCursorAdapter.swapCursor(cursor);
+
         }
 
         @Override

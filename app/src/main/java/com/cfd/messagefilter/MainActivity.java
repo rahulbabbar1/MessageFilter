@@ -57,7 +57,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             FragmentList frag = new FragmentList();
             frag.setArguments(bdlRecents);
             fragmentList.add(frag);
-            Log.d(TAG, "onCreate() called with: savedInstanceState = [" + savedInstanceState + "]");
         }
 
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager);

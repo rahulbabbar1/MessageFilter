@@ -35,7 +35,7 @@ public class FragmentList extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         category = getArguments().getInt("category");
-        arrayList = Utility.parseArrayList(fetchActivity.convList[category]);
+        //arrayList = Utility.parseArrayList(fetchActivity.convList[category]);
         //Collections.reverse(arrayList);
 
         myAdapter = new MyAdapter(arrayList);
