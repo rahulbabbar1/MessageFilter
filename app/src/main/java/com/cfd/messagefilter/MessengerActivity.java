@@ -47,16 +47,16 @@ public class MessengerActivity extends Activity {
         mChatView = (ChatView) findViewById(R.id.chat_view);
 
         //Set UI parameters if you need
-        mChatView.setRightBubbleColor(ContextCompat.getColor(this, R.color.green500));
-        mChatView.setLeftBubbleColor(Color.WHITE);
-        mChatView.setBackgroundColor(ContextCompat.getColor(this, R.color.blueGray500));
-        mChatView.setSendButtonColor(ContextCompat.getColor(this, R.color.cyan900));
+        mChatView.setRightBubbleColor(Color.WHITE);
+        mChatView.setLeftBubbleColor(Color.rgb(66,66,66));
+        mChatView.setBackgroundColor(Color.rgb(48,48,48));
+        mChatView.setSendButtonColor(Color.rgb(233,30,99));
         mChatView.setSendIcon(R.drawable.ic_action_send);
-        mChatView.setRightMessageTextColor(Color.WHITE);
-        mChatView.setLeftMessageTextColor(Color.BLACK);
+        mChatView.setRightMessageTextColor(Color.BLACK);
+        mChatView.setLeftMessageTextColor(Color.rgb(200,200,200));
         mChatView.setUsernameTextColor(Color.WHITE);
-        mChatView.setSendTimeTextColor(Color.WHITE);
-        mChatView.setDateSeparatorColor(Color.WHITE);
+        mChatView.setSendTimeTextColor(Color.rgb(84,110,122));
+        mChatView.setDateSeparatorColor(Color.rgb(113,135,145));
         mChatView.setInputTextHint("new message...");
         mChatView.setMessageMarginTop(5);
         mChatView.setMessageMarginBottom(5);
