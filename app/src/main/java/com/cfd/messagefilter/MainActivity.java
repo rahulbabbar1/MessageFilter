@@ -23,6 +23,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     SpaceTabLayout tabLayout;
     String TAG = this.getClass().getSimpleName();
     static ProgressBar progressBar;
+    Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +31,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_main);
         progressBar = (ProgressBar) findViewById(R.id.progressbar);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -51,6 +52,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager);
+
+        final String[] categories = getResources().getStringArray(R.array.Categories);
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                toolbar.setTitle(categories[position+2]);
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                toolbar.setTitle(categories[position+2]);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
         tabLayout = (SpaceTabLayout) findViewById(R.id.spaceTabLayout);
 
         //we need the savedInstanceState to retrieve the position
