@@ -5,70 +5,66 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.telephony.SmsMessage;
+import android.util.Log;
 
-import java.text.SimpleDateFormat;
+import com.cfd.messagefilter.models.SMS;
+import com.cfd.messagefilter.models.SMSCategory;
+
 import java.util.Date;
+import java.util.Objects;
+
+import io.realm.Realm;
+import io.realm.RealmList;
 
 /**
  * Created by rahul on 31/1/17.
  */
-public class SmsReceiver extends BroadcastReceiver{
+public class SmsReceiver extends BroadcastReceiver {
     private static final String TAG = SmsReceiver.class.getSimpleName();
-
+    private static final String SMS_RECEIVED = "android.provider.Telephony.SMS_RECEIVED";
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Bundle bundle = intent.getExtras();
-        SmsMessage msg = null;
-        if (null != bundle) {
-            Object[] smsObj = (Object[]) bundle.get("pdus");
-            for (Object object : smsObj) {
-                msg = SmsMessage.createFromPdu((byte[]) object);
-                Date date = new Date(msg.getTimestampMillis());
-                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                String receiveTime = format.format(date);
-//                if (msg.getDisplayMessageBody().contains("<>")) {
-//                    //DBHandler db = new DBHandler(context);
-//                    String str = msg.getDisplayMessageBody().substring(2);
-////                    Schedule test;
-////                    test = db.getSchedule(Integer.parseInt(str));
-////
-////                    String smsBody = test.getTimetable();
-//
-//                    android.telephony.SmsManager smsManager = android.telephony.SmsManager.getDefault();
-//                    //smsManager.sendTextMessage(msg.getOriginatingAddress(), null, smsBody, null, null);
-//
-//                } else if (msg.getDisplayMessageBody().contains("><")) {
-//                    DBHandler db = new DBHandler(context);
-//                    int i = Integer.parseInt(msg.getDisplayMessageBody().substring(2, 4));
-//                    String str2 = msg.getDisplayMessageBody().substring(4);
-//                    Schedule test;
-//                    test = db.getSchedule(Integer.parseInt(str2));
-//
-//                    String smsBody = test.getTimetable();
-//                    String newtest = smsBody.substring(0, i) + '1' + smsBody.substring(i + 1);
-//                    test.setTimetable(newtest);
-//                    db.updateSchedule(test);
-//                    String strdate = "";
-//                    String name=test.getName();
-//                    int x = i % 24;
-//                    int y = i / 24;
-//                    if (y == 0) {
-//                        strdate = "Today";
-//                    } else if (y == 1) {
-//                        strdate = "Tomorrow";
-//                    } else if (y == 2) {
-//                        strdate = "Day after tomorrow";
-//                    }
-//                    android.telephony.SmsManager smsManager = android.telephony.SmsManager.getDefault();
-//                    smsManager.sendTextMessage(msg.getOriginatingAddress(), null, "Your Booking is Done for " + " " + strdate + " " + "at" + " " + x + ":00 hrs" +" with "+name, null, null);
-//
-//
-//                }
+        Log.i(TAG, "Intent recieved: " + intent.getAction());
+        if (Objects.equals(intent.getAction(), SMS_RECEIVED)) {
+            Bundle bundle = intent.getExtras();
+            if (bundle != null) {
+                Object[] pdus = (Object[]) bundle.get("pdus");
+                final SmsMessage[] messages;
+                if (pdus != null) {
+                    String msgBody = "";
+                    messages = new SmsMessage[pdus.length];
+                    for (int i = 0; i < pdus.length; i++) {
+                        messages[i] = SmsMessage.createFromPdu((byte[]) pdus[i]);
+                        if (messages[i] != null) {
+                            msgBody += messages[i].getMessageBody();
+                        }
+                    }
+                    if (messages.length > 0) {
+                        final String phoneNumber = messages[0].getOriginatingAddress();
+                        Realm realm = Realm.getDefaultInstance();
+                        final Utils utils = new Utils(context);
+                        final String finalMsgBody = msgBody;
+                        final RealmList<SMS> defaultCategoryList = realm.where(SMSCategory.class).equalTo("id", -1).findFirst().getSmss();
+                        realm.executeTransaction(new Realm.Transaction() {
+                            @Override
+                            public void execute(Realm realm) {
+                                SMS sms = realm.createObject(SMS.class);
+                                sms.setNumber(phoneNumber);
+                                int maxId = realm.where(SMS.class).max("_id").intValue() + 1;
+                                sms.set_id(maxId);
+                                sms.setBody(finalMsgBody);
+                                sms.setDate(new Date());
+                                sms.setName(utils.getName(phoneNumber));
+                                sms.setType(1);
+                                defaultCategoryList.add(sms);
+//                                utils.saveToRealm(sms);
+                            }
+                        });
 
-
+                    }
+                }
             }
         }
     }
-
 }

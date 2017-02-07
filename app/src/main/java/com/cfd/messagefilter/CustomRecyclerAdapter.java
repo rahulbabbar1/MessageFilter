@@ -2,6 +2,7 @@ package com.cfd.messagefilter;
 
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,56 +11,54 @@ import android.widget.TextView;
 import com.cfd.messagefilter.models.SMS;
 import com.cfd.messagefilter.models.SMSCategory;
 
-import java.util.ArrayList;
-
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
-import io.realm.RealmList;
-import io.realm.RealmModel;
 import io.realm.RealmResults;
 import io.realm.Sort;
+
 
 /**
  * Created by Chirag on 07-02-2017.
  */
 
 class CustomRecyclerAdapter extends RecyclerView.Adapter<CustomRecyclerAdapter.ViewHolder> {
-
-    private RealmList<SMS> smsRealmList;
     private int category;
+    private RealmResults<SMS> smsRealmList;
 
     CustomRecyclerAdapter(int category) {
         Realm realm = Realm.getDefaultInstance();
-        this.category = category;
-        SMSCategory smsCategory = realm.where(SMSCategory.class).equalTo("id", category).findFirst();
-        fetchData(smsCategory);
-        smsCategory.addChangeListener(new RealmChangeListener<RealmModel>() {
+        final SMSCategory smsCategory = realm.where(SMSCategory.class).equalTo("id", category).findFirst();
+        smsRealmList = smsCategory.getSmss().where().findAllSorted("date", Sort.DESCENDING);
+        smsRealmList.addChangeListener(new RealmChangeListener<RealmResults<SMS>>() {
+
             @Override
-            public void onChange(RealmModel element) {
+            public void onChange(RealmResults<SMS> element) {
+                Log.d("CHANGE", "UPDATE");
                 notifyDataSetChanged();
             }
         });
     }
 
-    private void fetchData(SMSCategory smsCategory){
-        smsRealmList = new RealmList<SMS>();
-        RealmResults<SMS> realmlist = smsCategory.getSmss().sort("date", Sort.DESCENDING);
-        ArrayList<String> phoneNumbers = new ArrayList<String>();
-        for (SMS sms : realmlist) {
-            if(!phoneNumbers.contains(sms.getNumber())){
-                phoneNumbers.add(sms.getNumber());
-                smsRealmList.add(sms);
-            }
-        }
-        //smsRealmList = smsCategory.getSmss();
-    };
+//    private void fetchData(SMSCategory smsCategory){
+//        smsRealmList = new RealmList<SMS>();
+//        RealmResults<SMS> realmlist = ;
+//        ArrayList<String> phoneNumbers = new ArrayList<String>();
+//        for (SMS sms : realmlist) {
+//            if(!phoneNumbers.contains(sms.getNumber())){
+//                phoneNumbers.add(sms.getNumber());
+//                smsRealmList.add(sms);
+//            }
+//        }
+//        //smsRealmList = smsCategory.getSmss();
+//    };
 
 
     class ViewHolder extends RecyclerView.ViewHolder {
         // each data item is just a string in this case
         private TextView mNumber;
         private TextView mSms;
-        private TextView mTime;;
+        private TextView mTime;
+        ;
         private View mView;
 
 
@@ -88,10 +87,10 @@ class CustomRecyclerAdapter extends RecyclerView.Adapter<CustomRecyclerAdapter.V
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent (view.getContext(), MessengerActivity.class);
+                Intent intent = new Intent(view.getContext(), MessengerActivity.class);
                 //intent.putExtra("id",sms.get_id());
-                intent.putExtra("phone",sms.getNumber());
-                intent.putExtra("cat",category);
+                intent.putExtra("phone", sms.getNumber());
+                intent.putExtra("cat", category);
                 view.getContext().startActivity(intent);
             }
         });

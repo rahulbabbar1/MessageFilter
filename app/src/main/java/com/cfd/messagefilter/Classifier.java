@@ -2,6 +2,8 @@ package com.cfd.messagefilter;
 
 import android.content.Context;
 import android.util.Log;
+import android.view.View;
+import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.RequestQueue;
@@ -23,18 +25,22 @@ import io.realm.RealmList;
  * Created by Chirag on 07-02-2017.
  */
 
-public class Classifier {
+class Classifier {
     private Context context;
     private Realm realm;
 
-    public Classifier(Context context) {
+    Classifier(Context context) {
         this.context = context;
         realm = Realm.getDefaultInstance();
     }
 
-    public void classifyAllDefaultCategoryMesssages() {
+    void classifyAllDefaultCategoryMesssages() {
         RealmList<SMS> smss = realm.where(SMSCategory.class).equalTo("id", -1).findFirst().getSmss();
-        sendRequest(convertSmsesToString(smss));
+        if (smss.size() > 0) {
+            sendRequest(convertSmsesToString(smss));
+        } else {
+            Toast.makeText(context, "No messages found", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private String convertSmsesToString(RealmList<SMS> smses) {
@@ -68,14 +74,22 @@ public class Classifier {
                             public void execute(Realm realm) {
                                 SMS sms = realm.where(SMS.class).equalTo("_id", _id).findFirst();
                                 RealmList<SMS> defaultCategoryList = realm.where(SMSCategory.class).equalTo("id", -1).findFirst().getSmss();
-                                if (defaultCategoryList.remove(sms)) {
+                                boolean check = defaultCategoryList.remove(sms);
+                                Log.d("Check", "bool " + check);
+                                if (check) {
                                     RealmList<SMS> categoryList = realm.where(SMSCategory.class).equalTo("id", predictedCat).findFirst().getSmss();
                                     categoryList.add(sms);
                                 }
                             }
                         });
                     }
+                    if (MainActivity.progressBar != null) {
+                        MainActivity.progressBar.setVisibility(View.GONE);
+                    }
                 } catch (JSONException e) {
+                    if (MainActivity.progressBar != null) {
+                        MainActivity.progressBar.setVisibility(View.GONE);
+                    }
                     e.printStackTrace();
                 }
             }
@@ -84,9 +98,16 @@ public class Classifier {
         Response.ErrorListener errorListener = new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                if (MainActivity.progressBar != null) {
+                    MainActivity.progressBar.setVisibility(View.GONE);
+                }
+                Toast.makeText(context,"Error in loading", Toast.LENGTH_LONG).show();
                 error.printStackTrace();
             }
         };
+        if (MainActivity.progressBar != null) {
+            MainActivity.progressBar.setVisibility(View.VISIBLE);
+        }
         SMSClassifyRequest smsClassifyRequest = new SMSClassifyRequest(smses, responseListener, errorListener);
         smsClassifyRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 5, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         RequestQueue queue = Volley.newRequestQueue(context);
