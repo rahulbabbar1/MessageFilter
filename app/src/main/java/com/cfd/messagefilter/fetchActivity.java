@@ -18,7 +18,6 @@ public class fetchActivity extends AppCompatActivity {
     private Realm realm;
     private static final String TAG = fetchActivity.class.getSimpleName();
 
-
     //    public static Map<String, List<SmsData>>[] convList;
     @Override
     protected void onCreate(Bundle savedInstanceState) {

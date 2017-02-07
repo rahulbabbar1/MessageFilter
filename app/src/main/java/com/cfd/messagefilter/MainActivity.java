@@ -113,6 +113,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
+
     private boolean isPermissionAllowed(String permission) {
         //Getting the permission status
 //        permission = Manifest.permission.READ_EXTERNAL_STORAGE
