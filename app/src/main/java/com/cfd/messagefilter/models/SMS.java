@@ -16,6 +16,7 @@ public class SMS extends RealmObject {
     private String name;
     private int type;
     private int threadId;
+    private boolean isRead;
 
     public int get_id() {
         return _id;
@@ -71,5 +72,13 @@ public class SMS extends RealmObject {
 
     public void setThreadId(int threadId) {
         this.threadId = threadId;
+    }
+
+    public boolean isRead() {
+        return isRead;
+    }
+
+    public void setRead(boolean read) {
+        isRead = read;
     }
 }

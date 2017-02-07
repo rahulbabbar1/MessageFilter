@@ -2,12 +2,14 @@ package com.cfd.messagefilter.models;
 
 import io.realm.RealmList;
 import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 
 /**
  * Created by Chirag on 06-02-2017.
  */
 
 public class SMSCategory extends RealmObject {
+    @PrimaryKey
     private int id;
     private String name;
     private RealmList<SMS> smss;

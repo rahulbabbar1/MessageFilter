@@ -1,7 +1,6 @@
 package com.cfd.messagefilter;
 
 import android.app.LoaderManager;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Loader;
@@ -9,7 +8,6 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 
 import com.cfd.messagefilter.models.SMS;
 import com.cfd.messagefilter.models.SMSCategory;
@@ -24,16 +22,18 @@ import io.realm.RealmList;
  */
 class AllSmsLoader implements LoaderManager.LoaderCallbacks<Cursor> {
     private Context context;
+    private Utils utils;
     private Realm realm;
-    private RealmList<SMS> smss;
+    private RealmList<SMS> defaultCategoryList;
     AllSmsLoader(Context context) {
         this.context = context;
+        realm = Realm.getDefaultInstance();
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        realm = Realm.getDefaultInstance();
-        smss = realm.where(SMSCategory.class).equalTo("id",-1).findFirst().getSmss();
+        utils = new Utils(context);
+        defaultCategoryList = realm.where(SMSCategory.class).equalTo("id", -1).findFirst().getSmss();
         final String SMS_ALL = "content://sms/";
         Uri uri = Uri.parse(SMS_ALL);
         String[] projection = new String[]{"_id", "thread_id", "address", "person", "body", "date", "type"};
@@ -46,24 +46,11 @@ class AllSmsLoader implements LoaderManager.LoaderCallbacks<Cursor> {
             final String phoneNumber = cursor.getString(cursor.getColumnIndexOrThrow("address"));
             final int type = cursor.getInt(cursor.getColumnIndexOrThrow("type"));
             if ((type != 3) && (phoneNumber.length() >= 1)) {
-                String name = null;
                 //String person = cursor.getString(cursor.getColumnIndexOrThrow("person"));
                 final int _id = Integer.parseInt(cursor.getString(cursor.getColumnIndexOrThrow("_id")));
                 final int threadId = Integer.parseInt(cursor.getString(cursor.getColumnIndexOrThrow("thread_id")));
                 final String smsContent = cursor.getString(cursor.getColumnIndexOrThrow("body"));
                 final Date date = new Date(Long.parseLong(cursor.getString(cursor.getColumnIndexOrThrow("date"))));
-                Uri personUri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, phoneNumber);
-                ContentResolver cr = context.getContentResolver();
-                Cursor localCursor = cr.query(personUri,
-                        new String[]{ContactsContract.Contacts.DISPLAY_NAME}, null, null, null);//use phonenumber find contact name
-                if ( localCursor != null ) {
-                    if (localCursor.getCount() != 0) {
-                        localCursor.moveToFirst();
-                        name = localCursor.getString(localCursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
-                    }
-                    localCursor.close();
-                }
-                final String finalName = name;
                 realm.executeTransaction(new Realm.Transaction() {
                     @Override
                     public void execute(Realm realm) {
@@ -73,9 +60,9 @@ class AllSmsLoader implements LoaderManager.LoaderCallbacks<Cursor> {
                         sms.setBody(smsContent);
                         sms.setDate(date);
                         sms.setThreadId(threadId);
-                        sms.setName(finalName);
+                        sms.setName(utils.getName(phoneNumber));
                         sms.setType(type);
-                        smss.add(sms);
+                        defaultCategoryList.add(sms);
                     }
                 });
             }
@@ -85,10 +72,14 @@ class AllSmsLoader implements LoaderManager.LoaderCallbacks<Cursor> {
         SharedPreferences.Editor editor = pref.edit();
         editor.putBoolean("FirstRun", false);
         editor.apply();
+        Classifier classifier = new Classifier(context);
+        classifier.classifyAllDefaultCategoryMesssages();
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> cursorLoader) {
         //simpleCursorAdapter.swapCursor(null);
     }
+
+
 }
