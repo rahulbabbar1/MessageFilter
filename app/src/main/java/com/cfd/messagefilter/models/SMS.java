@@ -3,6 +3,7 @@ package com.cfd.messagefilter.models;
 import java.util.Date;
 
 import io.realm.RealmObject;
+import io.realm.annotations.Index;
 
 /**
  * Created by Chirag on 06-02-2017.
@@ -10,6 +11,7 @@ import io.realm.RealmObject;
 
 public class SMS extends RealmObject {
     private int _id;
+    @Index
     private String number;
     private String body;
     private Date date;

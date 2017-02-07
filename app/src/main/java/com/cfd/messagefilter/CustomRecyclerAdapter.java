@@ -27,8 +27,9 @@ class CustomRecyclerAdapter extends RecyclerView.Adapter<CustomRecyclerAdapter.V
 
     CustomRecyclerAdapter(int category) {
         Realm realm = Realm.getDefaultInstance();
+        this.category = category;
         final SMSCategory smsCategory = realm.where(SMSCategory.class).equalTo("id", category).findFirst();
-        smsRealmList = smsCategory.getSmss().where().findAllSorted("date", Sort.DESCENDING);
+        smsRealmList = smsCategory.getSmss().where().distinct("number").sort("date", Sort.DESCENDING);
         smsRealmList.addChangeListener(new RealmChangeListener<RealmResults<SMS>>() {
 
             @Override
@@ -81,16 +82,20 @@ class CustomRecyclerAdapter extends RecyclerView.Adapter<CustomRecyclerAdapter.V
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         final SMS sms = smsRealmList.get(position);
-        holder.mNumber.setText(sms.getNumber());
+        if(sms.getName() != null) {
+            holder.mNumber.setText(sms.getName());
+        } else {
+            holder.mNumber.setText(sms.getNumber());
+        }
         holder.mSms.setText(sms.getBody());
         holder.mTime.setText(sms.getDate().toString());
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(view.getContext(), MessengerActivity.class);
-                //intent.putExtra("id",sms.get_id());
                 intent.putExtra("phone", sms.getNumber());
                 intent.putExtra("cat", category);
+                intent.putExtra("name", sms.getName());
                 view.getContext().startActivity(intent);
             }
         });

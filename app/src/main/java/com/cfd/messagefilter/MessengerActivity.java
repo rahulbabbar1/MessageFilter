@@ -9,17 +9,21 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.Toolbar;
 import android.telephony.SmsManager;
+import android.util.Log;
 import android.view.View;
 
 import com.cfd.messagefilter.models.SMS;
 import com.cfd.messagefilter.models.SMSCategory;
 
+import java.util.Calendar;
 import java.util.Random;
 
 import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.RealmResults;
+import io.realm.Sort;
 import jp.bassaer.chatmessageview.models.Message;
 import jp.bassaer.chatmessageview.models.User;
 import jp.bassaer.chatmessageview.utils.ChatBot;
@@ -34,14 +38,18 @@ public class MessengerActivity extends Activity {
     private String phone;
     private int category;
     private ChatView mChatView;
+    private Toolbar toolbar;
     String TAG = this.getClass().getSimpleName();
+    private String name;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_messenger);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         Intent data = getIntent();
         phone = data.getStringExtra("phone");
+        name = data.getStringExtra("name");
         category = data.getIntExtra("cat", 111);
         //User id
 
@@ -151,25 +159,36 @@ public class MessengerActivity extends Activity {
 
     private void fetchSms(int category,String phone){
         Realm realm = Realm.getDefaultInstance();
+        if(name!=null) {
+            toolbar.setTitle(name);
+        } else {
+            toolbar.setTitle(phone);
+        }
         RealmResults<SMS> smses =
                 realm.where(SMSCategory.class).equalTo("id", category)
                         .findFirst()
                         .getSmss()
                         .where()
                         .equalTo("number", phone)
-                        .findAll();
+                        .findAllSorted("date", Sort.ASCENDING);
+        Log.d(TAG, category + "," + phone);
         for (SMS sms: smses ) {
+            Log.d(TAG, sms.get_id() +"");
             boolean right = true;
             User user = me;
             if(sms.getType()==1){
                 user = you;
                 right = false;
             }
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(sms.getDate());
             Message message = new Message.Builder()
                         .setUser(user)
                         .setRightMessage(right)
                         .setMessageText(sms.getBody())
                         .hideIcon(true)
+                        .setDateCell(true)
+                        .setCreatedAt(calendar)
                         .build();
             mChatView.send(message);
         }
