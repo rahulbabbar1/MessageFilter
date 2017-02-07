@@ -16,6 +16,5 @@ public class SpamActivity extends AppCompatActivity {
         FragmentList frag = new FragmentList();
         frag.setCategory(0);
         getSupportFragmentManager().beginTransaction().add(R.id.container, frag, "SPAM").commit();
-
     }
 }

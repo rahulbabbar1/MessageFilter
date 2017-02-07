@@ -27,9 +27,9 @@
         app:text_three="Otp"
         app:tab_color="@color/colorPrimary"
         app:text_color="#61FFFFFF"
-        app:icon_one="@drawable/ic_bookmark"
-        app:icon_two="@drawable/ic_home"
-        app:icon_three="@drawable/ic_recent"
-        app:icon_four="@drawable/ic_recent"
-        app:icon_five="@drawable/ic_recent"/>
+        app:icon_one="@mipmap/ic_social"
+        app:icon_two="@mipmap/ic_bussiness"
+        app:icon_three="@mipmap/ic_otp"
+        app:icon_four="@mipmap/ic_network"
+        app:icon_five="@mipmap/ic_payment"/>
 </RelativeLayout>
