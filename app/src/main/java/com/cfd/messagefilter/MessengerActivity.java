@@ -1,6 +1,7 @@
 package com.cfd.messagefilter;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -9,8 +10,14 @@ import android.os.Handler;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
 
+import com.cfd.messagefilter.models.SMS;
+import com.cfd.messagefilter.models.SMSCategory;
+
 import java.util.Random;
 
+import io.realm.Realm;
+import io.realm.RealmList;
+import io.realm.RealmResults;
 import jp.bassaer.chatmessageview.models.Message;
 import jp.bassaer.chatmessageview.models.User;
 import jp.bassaer.chatmessageview.utils.ChatBot;
@@ -22,6 +29,8 @@ import jp.bassaer.chatmessageview.views.ChatView;
 public class MessengerActivity extends Activity {
     User me;
     User you;
+    private String phone;
+    private int category;
     private ChatView mChatView;
     String TAG = this.getClass().getSimpleName();
 
@@ -29,72 +38,50 @@ public class MessengerActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_messenger);
-
+        Intent data = getIntent();
+        phone = data.getStringExtra("phone");
+        category = data.getIntExtra("cat", 111);
         //User id
-        int myId = 0;
-        //User icon
-        Bitmap myIcon = BitmapFactory.decodeResource(getResources(), R.drawable.face_2);
-        //User name
-        String myName = "You";
 
-        int yourId = 1;
-        Bitmap yourIcon = BitmapFactory.decodeResource(getResources(), R.drawable.face_1);
-        String yourName = "Emily";
+        setUser();
 
-        me = new User(myId, myName, myIcon);
-        you = new User(yourId, yourName, yourIcon);
+        setChatview();
 
-        mChatView = (ChatView) findViewById(R.id.chat_view);
-
-        //Set UI parameters if you need
-        mChatView.setRightBubbleColor(Color.WHITE);
-        mChatView.setLeftBubbleColor(Color.rgb(66,66,66));
-        mChatView.setBackgroundColor(Color.rgb(48,48,48));
-        mChatView.setSendButtonColor(Color.rgb(233,30,99));
-        mChatView.setSendIcon(R.drawable.ic_action_send);
-        mChatView.setRightMessageTextColor(Color.BLACK);
-        mChatView.setLeftMessageTextColor(Color.rgb(200,200,200));
-        mChatView.setUsernameTextColor(Color.WHITE);
-        mChatView.setSendTimeTextColor(Color.rgb(84,110,122));
-        mChatView.setDateSeparatorColor(Color.rgb(113,135,145));
-        mChatView.setInputTextHint("new message...");
-        mChatView.setMessageMarginTop(5);
-        mChatView.setMessageMarginBottom(5);
-
+        fetchSms(category,phone);
         //Click Send Button
 
 
         mChatView.setOnClickSendButtonListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //new message
-                Message message = new Message.Builder()
-                        .setUser(me)
-                        .setRightMessage(true)
-                        .setMessageText(mChatView.getInputText())
-                        .hideIcon(true)
-                        .build();
-                //Set to chat view
-                mChatView.send(message);
-                //Reset edit text
-                mChatView.setInputText("");
-
-                //Receive message
-                final Message receivedMessage = new Message.Builder()
-                        .setUser(you)
-                        .setRightMessage(false)
-                        .setMessageText(ChatBot.talk(me.getName(), message.getMessageText()))
-                        .build();
-
-                // This is a demo bot
-                // Return within 3 seconds
-                int sendDelay = (new Random().nextInt(4) + 1) * 1000;
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        mChatView.receive(receivedMessage);
-                    }
-                }, sendDelay);
+//                //new message
+//                Message message = new Message.Builder()
+//                        .setUser(me)
+//                        .setRightMessage(true)
+//                        .setMessageText(mChatView.getInputText())
+//                        .hideIcon(true)
+//                        .build();
+//                //Set to chat view
+//                mChatView.send(message);
+//                //Reset edit text
+//                mChatView.setInputText("");
+//
+//                //Receive message
+//                final Message receivedMessage = new Message.Builder()
+//                        .setUser(you)
+//                        .setRightMessage(false)
+//                        .setMessageText(ChatBot.talk(me.getName(), message.getMessageText()))
+//                        .build();
+//
+//                // This is a demo bot
+//                // Return within 3 seconds
+//                int sendDelay = (new Random().nextInt(4) + 1) * 1000;
+//                new Handler().postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        mChatView.receive(receivedMessage);
+//                    }
+//                }, sendDelay);
             }
 
         });
@@ -128,5 +115,62 @@ public class MessengerActivity extends Activity {
 //            //Set to chat view
 //            mChatView.send(message);
 //        }
+    }
+
+    private void setUser() {
+        int myId = 0;
+        Bitmap myIcon = BitmapFactory.decodeResource(getResources(), R.drawable.face_2);
+
+        String myName = "You";
+
+        int yourId = 1;
+        Bitmap yourIcon = BitmapFactory.decodeResource(getResources(), R.drawable.face_1);
+        String yourName = "Emily";
+
+        me = new User(myId, myName, myIcon);
+        you = new User(yourId, yourName, yourIcon);
+    }
+
+    private void setChatview() {
+        mChatView = (ChatView) findViewById(R.id.chat_view);
+        mChatView.setRightBubbleColor(Color.WHITE);
+        mChatView.setLeftBubbleColor(Color.rgb(66,66,66));
+        mChatView.setBackgroundColor(Color.rgb(48,48,48));
+        mChatView.setSendButtonColor(Color.rgb(233,30,99));
+        mChatView.setSendIcon(R.drawable.ic_action_send);
+        mChatView.setRightMessageTextColor(Color.BLACK);
+        mChatView.setLeftMessageTextColor(Color.rgb(200,200,200));
+        mChatView.setUsernameTextColor(Color.WHITE);
+        mChatView.setSendTimeTextColor(Color.rgb(84,110,122));
+        mChatView.setDateSeparatorColor(Color.rgb(113,135,145));
+        mChatView.setInputTextHint("new message...");
+        mChatView.setMessageMarginTop(5);
+        mChatView.setMessageMarginBottom(5);
+    }
+
+    private void fetchSms(int category,String phone){
+        Realm realm = Realm.getDefaultInstance();
+        RealmResults<SMS> smses =
+                realm.where(SMSCategory.class).equalTo("id", category)
+                        .findFirst()
+                        .getSmss()
+                        .where()
+                        .equalTo("number", phone)
+                        .findAll();
+        for (SMS sms: smses ) {
+            boolean right = true;
+            User user = me;
+            if(sms.getType()==1){
+                user = you;
+                right = false;
+            }
+            Message message = new Message.Builder()
+                        .setUser(user)
+                        .setRightMessage(right)
+                        .setMessageText(sms.getBody())
+                        .hideIcon(true)
+                        .build();
+            mChatView.send(message);
+        }
     }
 }

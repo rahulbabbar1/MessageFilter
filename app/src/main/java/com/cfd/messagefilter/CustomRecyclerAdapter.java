@@ -89,6 +89,7 @@ class CustomRecyclerAdapter extends RecyclerView.Adapter<CustomRecyclerAdapter.V
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent (view.getContext(), MessengerActivity.class);
+                //intent.putExtra("id",sms.get_id());
                 intent.putExtra("phone",sms.getNumber());
                 intent.putExtra("cat",category);
                 view.getContext().startActivity(intent);
