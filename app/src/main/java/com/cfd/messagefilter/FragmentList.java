@@ -9,19 +9,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
-
-import com.cfd.messagefilter.models.SMS;
-import com.cfd.messagefilter.models.SMSCategory;
-
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Locale;
-import java.util.TimeZone;
-
-import io.realm.Realm;
-import io.realm.RealmList;
 
 /**
  * Created by rahul on 25/12/16.
@@ -36,11 +23,12 @@ public class FragmentList extends Fragment {
     public void setCategory(int category) {
         this.category = category;
     }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Log.d(TAG, "category:"+category);
+        Log.d(TAG, "category:" + category);
         customRecyclerAdapter = new CustomRecyclerAdapter(category);
     }
 

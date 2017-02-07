@@ -27,12 +27,12 @@ class AllSmsLoader implements LoaderManager.LoaderCallbacks<Cursor> {
     private RealmList<SMS> defaultCategoryList;
     AllSmsLoader(Context context) {
         this.context = context;
-        realm = Realm.getDefaultInstance();
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         utils = new Utils(context);
+        realm = Realm.getDefaultInstance();
         defaultCategoryList = realm.where(SMSCategory.class).equalTo("id", -1).findFirst().getSmss();
         final String SMS_ALL = "content://sms/";
         Uri uri = Uri.parse(SMS_ALL);

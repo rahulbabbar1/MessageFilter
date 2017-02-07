@@ -1,6 +1,7 @@
 package com.cfd.messagefilter;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,8 +12,7 @@ import com.cfd.messagefilter.models.SMSCategory;
 
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
-import io.realm.RealmList;
-import io.realm.RealmModel;
+import io.realm.RealmResults;
 
 /**
  * Created by Chirag on 07-02-2017.
@@ -20,15 +20,16 @@ import io.realm.RealmModel;
 
 class CustomRecyclerAdapter extends RecyclerView.Adapter<CustomRecyclerAdapter.ViewHolder> {
 
-    private RealmList<SMS> smsRealmList;
+    private RealmResults<SMS> smsRealmList;
 
     CustomRecyclerAdapter(int category) {
         Realm realm = Realm.getDefaultInstance();
-        SMSCategory smsCategory = realm.where(SMSCategory.class).equalTo("id", category).findFirst();
-        smsRealmList = smsCategory.getSmss();
-        smsCategory.addChangeListener(new RealmChangeListener<RealmModel>() {
+        final SMSCategory smsCategory = realm.where(SMSCategory.class).equalTo("id", category).findFirst();
+        smsRealmList = smsCategory.getSmss().where().findAll();
+        smsRealmList.addChangeListener(new RealmChangeListener<RealmResults<SMS>>() {
             @Override
-            public void onChange(RealmModel element) {
+            public void onChange(RealmResults<SMS> element) {
+                Log.d("CHANGE","UPDATE");
                 notifyDataSetChanged();
             }
         });
