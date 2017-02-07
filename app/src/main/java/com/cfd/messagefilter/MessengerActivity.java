@@ -1,6 +1,7 @@
 package com.cfd.messagefilter;
 
 import android.app.Activity;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -8,6 +9,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.content.ContextCompat;
+import android.telephony.SmsManager;
 import android.view.View;
 
 import com.cfd.messagefilter.models.SMS;
@@ -54,6 +56,7 @@ public class MessengerActivity extends Activity {
         mChatView.setOnClickSendButtonListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                  sendSMS(phone, mChatView.getInputText());
 //                //new message
 //                Message message = new Message.Builder()
 //                        .setUser(me)
@@ -119,16 +122,14 @@ public class MessengerActivity extends Activity {
 
     private void setUser() {
         int myId = 0;
-        Bitmap myIcon = BitmapFactory.decodeResource(getResources(), R.drawable.face_2);
 
         String myName = "You";
 
         int yourId = 1;
-        Bitmap yourIcon = BitmapFactory.decodeResource(getResources(), R.drawable.face_1);
         String yourName = "Emily";
 
-        me = new User(myId, myName, myIcon);
-        you = new User(yourId, yourName, yourIcon);
+        me = new User(myId, myName, null);
+        you = new User(yourId, yourName, null);
     }
 
     private void setChatview() {
@@ -172,5 +173,13 @@ public class MessengerActivity extends Activity {
                         .build();
             mChatView.send(message);
         }
+    }
+
+    private void sendSMS(String phoneNumber, String message)
+    {
+        PendingIntent pi = PendingIntent.getActivity(this, 0,
+                new Intent(this, SmsActivity.class), 0);
+        SmsManager sms = SmsManager.getDefault();
+        sms.sendTextMessage(phoneNumber, null, message, pi, null);
     }
 }

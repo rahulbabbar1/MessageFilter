@@ -46,7 +46,7 @@
                     android:layout_marginLeft="2dp"
                     android:layout_marginRight="2dp"
                     android:layout_marginTop="10dp"
-                    android:src="@drawable/mdglogowhite" />
+                    android:src="@drawable/ic_launcher" />
 
                 <TextView
                     android:id="@+id/about_us_detail"
@@ -55,7 +55,7 @@
                     android:layout_marginLeft="6dp"
                     android:layout_marginStart="6dp"
                     android:paddingTop="20dp"
-                    android:text="Mobile development group at IIT Roorkee is an active student group directing its efforts towards creating useful mobile applications and promoting tech based learning for the same."
+                    android:text="So, here in our app we use Machine learning and text manipulation coupled with a nice interface, to deal with these problem we use separate screens for each type of message (Personal, Bank, OTP, Social, Recharge details and SPAM) for providing a much needed improvement in the field of text messaging"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:textColor="#ffffff"
                     android:textSize="18sp"
@@ -63,35 +63,35 @@
 
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal|bottom"
-                android:layout_marginBottom="0dp"
-                android:orientation="horizontal">
+            <!--<LinearLayout-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_gravity="center_horizontal|bottom"-->
+                <!--android:layout_marginBottom="0dp"-->
+                <!--android:orientation="horizontal">-->
 
-                <ImageView
-                    android:id="@+id/git_about_us"
-                    android:layout_width="72dp"
-                    android:layout_height="64dp"
-                    android:padding="10dp"
-                    android:src="@drawable/github" />
+                <!--<ImageView-->
+                    <!--android:id="@+id/git_about_us"-->
+                    <!--android:layout_width="72dp"-->
+                    <!--android:layout_height="64dp"-->
+                    <!--android:padding="10dp"-->
+                    <!--android:src="@drawable/github" />-->
 
-                <ImageView
-                    android:id="@+id/fb_about_us"
-                    android:layout_width="72dp"
-                    android:layout_height="64dp"
-                    android:padding="10dp"
-                    android:src="@drawable/facebook_icon" />
+                <!--<ImageView-->
+                    <!--android:id="@+id/fb_about_us"-->
+                    <!--android:layout_width="72dp"-->
+                    <!--android:layout_height="64dp"-->
+                    <!--android:padding="10dp"-->
+                    <!--android:src="@drawable/facebook_icon" />-->
 
-                <ImageView
-                    android:id="@+id/play_about_us"
-                    android:layout_width="72dp"
-                    android:layout_height="64dp"
-                    android:padding="10dp"
-                    android:src="@drawable/play_store" />
+                <!--<ImageView-->
+                    <!--android:id="@+id/play_about_us"-->
+                    <!--android:layout_width="72dp"-->
+                    <!--android:layout_height="64dp"-->
+                    <!--android:padding="10dp"-->
+                    <!--android:src="@drawable/play_store" />-->
 
-            </LinearLayout>
+            <!--</LinearLayout>-->
 
         </LinearLayout>
     </ScrollView>

@@ -8,6 +8,8 @@ import android.support.v7.app.AppCompatActivity;
 import com.cfd.messagefilter.models.SMS;
 import com.cfd.messagefilter.models.SMSCategory;
 
+import java.util.ArrayList;
+
 import io.realm.Realm;
 import io.realm.RealmList;
 

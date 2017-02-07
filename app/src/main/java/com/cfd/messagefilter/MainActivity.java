@@ -44,8 +44,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView.setNavigationItemSelectedListener(this);
 
         ArrayList<Fragment> fragmentList = new ArrayList<>();
-
-        for (int i = 1; i < 6; i++) {
+        for (int i = 1; i <= 5; i++) {
             FragmentList frag = new FragmentList();
             frag.setCategory(i);
             fragmentList.add(frag);
@@ -86,13 +85,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int id = item.getItemId();
 
         //TODO Complete this method
-        if (id == R.id.nav_invite_friends) {
-
-        } else if (id == R.id.nav_how_to) {
-
-        } else if (id == R.id.nav_settings) {
-
+        if (id == R.id.nav_spam) {
+            Intent i = new Intent(this, SpamActivity.class);
+            this.startActivity(i);
         }
+//        else if (id == R.id.nav_how_to) {
+//
+//        } else if (id == R.id.nav_settings) {
+//
+//        }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
